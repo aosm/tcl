@@ -1,36 +1,33 @@
 ##
-# Makefile for tclAE
+# Makefile for tclae
 ##
 # Daniel A. Steffen <das@users.sourceforge.net>
 ##
 
 # Project info
-Project               = TclAE
+Project               = tclae
+ProjectName           = TclAE
 
-Extra_Environment     = GCC_VERSION=4.0 PRECOMPILE_PREFIX_HEADER=NO \
-                        FRAMEWORK_SEARCH_PATHS="$(shell dirname $(TclFramework))" \
-                        LIBRARY_SEARCH_PATHS="$(TclFramework)" $(TEA_Environment) \
-                        INSTALL_ROOT="$(SYMROOT)/Deployment.build/"
-Extra_Install_Flags   = INSTALL_ROOT="$(DSTROOT)$(TclExtLibDir)/"
+# Fetch info
+Release               = 2.0.3
+TEApotVersion         = 0.0.0.2008.01.10.23.11.30
+TEApotProject         = tclAE
 
-AfterInstall          = install-doc fix-owner kill-appledouble
+Extra_Configure_Flags = $(TEA_Configure_Flags)
+Extra_Environment     = $(TEA_Environment)
 
-TEA_UseXcode          = YES
+GnuAfterInstall       = strip install-doc fix-perms
+GnuNoBuild            = YES
 
 # include TEA Tcl extension build support
 include ../TEA.make
 
-Sources               = $(SRCROOT)/$(Project)/Build
-Docs                  = $(SRCROOT)/$(Project)/Help/$(Project) Help
+TclExtDir             = tclAE
+
+build::
+	@echo "Building $(Project)..."
+	$(_v) $(Environment) $(MAKE) -C $(BuildDirectory)
 
 install-doc:
-	$(_v) $(INSTALL_DIRECTORY) "$(DSTROOT)/$(TclExtHtmlDir)/style"
-	$(_v) $(INSTALL_FILE) "$(Docs)"/*.html "$(DSTROOT)/$(TclExtHtmlDir)"
-	$(_v) $(INSTALL_FILE) "$(Docs)"/style/* "$(DSTROOT)/$(TclExtHtmlDir)"/style
-
-kill-appledouble:
-#	~fs/bin/xattrutil remove -a $(DSTROOT)/System/Library/Tcl/tclAE2.0
-	mkdir $(DSTROOT)/System/Library/Tcl/tclAE2.0.foo
-	mv $(DSTROOT)/System/Library/Tcl/tclAE2.0/* $(DSTROOT)/System/Library/Tcl/tclAE2.0.foo
-	rm -rf $(DSTROOT)/System/Library/Tcl/tclAE2.0
-	mv $(DSTROOT)/System/Library/Tcl/tclAE2.0.foo $(DSTROOT)/System/Library/Tcl/tclAE2.0
+	$(_v) $(INSTALL_DIRECTORY) "$(DSTROOT)/$(TclExtHtmlDir)"
+	$(_v) $(INSTALL_FILE) "$(Sources)"/doc/*.{html,css,png} "$(DSTROOT)/$(TclExtHtmlDir)"
